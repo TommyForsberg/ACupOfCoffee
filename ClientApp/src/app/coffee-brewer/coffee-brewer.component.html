@@ -1,3 +1,14 @@
-<p>
-  coffee-brewer works!
-</p>
+<div class="text-center" id="coffee-image">
+  <img src="../assets/images/coffee-cup.png" alt="image">
+  <div class="p-3" id="control-panel">
+
+    <!-- <button (click)="startBrewing();" class="btn btn-warning" *ngIf="!brewing; else progressBar">Start Brewing</button>-->
+    <!--  <ng-template #progressBar>-->
+    <button (click)="addCupToQue();" class="btn btn-warning">Start Brewing</button>
+    <app-coffee-cup *ngFor="let cup of coffeCups; let i = index" [newCup]="cup"></app-coffee-cup>
+
+   
+
+    <!--</ng-template>-->
+  </div>
+</div>
