@@ -19,7 +19,7 @@ export class CoffeeCupComponent implements OnInit {
   progressUnit: number;
   duration: number;
   coffeProgress2: Observable<number>;
-
+  updateInterval: number = 100;
   brewing: boolean = false;
  timeLeft;
 
@@ -32,16 +32,16 @@ export class CoffeeCupComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.duration = moment(this.newCup.endDate).diff(this.newCup.creationDate) / 1000
+    this.duration = moment(this.newCup.endDate).diff(this.newCup.creationDate) / this.updateInterval;
     //duration 30 sec
     console.log("duration"+this.duration);
     
     console.log('timeleft' + this.timeLeft);
     this.progressUnit = 100 / this.duration;
-    this.timeLeft = moment(this.newCup.endDate).diff(Date.now()) / 1000;
+    this.timeLeft = moment(this.newCup.endDate).diff(Date.now()) / this.updateInterval;
     this.brewingTime = (this.duration - this.timeLeft) * this.progressUnit;
     console.log('brewingtime' + this.brewingTime);
-    this.coffeProgress = Observable.interval(1000).takeWhile(() => this.brewingTime <= 100);
+    this.coffeProgress = Observable.interval(this.updateInterval).takeWhile(() => this.brewingTime <= 100);
 
    
 

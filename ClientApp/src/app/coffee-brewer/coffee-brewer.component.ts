@@ -21,7 +21,7 @@ export class CoffeeBrewerComponent implements OnInit {
   addCupToQue() {
     var coffee = new CoffeCup();
     coffee.creationDate = new Date();
-    coffee.endDate = moment(coffee.creationDate).add(30, 'seconds').toDate();
+    coffee.endDate = moment(coffee.creationDate).add(3, 'minutes').toDate();
     console.log(coffee.creationDate + " " + coffee.endDate);
     this.coffeCups.push(coffee);
   }
