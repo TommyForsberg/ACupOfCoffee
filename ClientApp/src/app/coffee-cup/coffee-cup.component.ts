@@ -4,6 +4,8 @@ import { TimeSpan } from 'timespan';
 import * as moment from 'moment';
 import 'rxjs/Rx';
 import { CoffeCup } from '../coffe-cup';
+import { IScheduler } from 'rxjs/Scheduler';
+import { Subscription } from 'rxjs/Subscription';
 
 @Component({
   selector: 'app-coffee-cup',
@@ -15,7 +17,9 @@ export class CoffeeCupComponent implements OnInit {
 
   coffeProgress: Observable<number>;
   progressUnit: number;
- 
+  duration: number;
+  coffeProgress2: Observable<number>;
+
   brewing: boolean = false;
  timeLeft;
 
@@ -28,25 +32,56 @@ export class CoffeeCupComponent implements OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.coffeProgress = Observable.interval(100);
+    this.duration = moment(this.newCup.endDate).diff(this.newCup.creationDate) / 1000
+    //duration 30 sec
+    console.log("duration"+this.duration);
+    
+    console.log('timeleft' + this.timeLeft);
+    this.progressUnit = 100 / this.duration;
+    this.timeLeft = moment(this.newCup.endDate).diff(Date.now()) / 1000;
+    this.brewingTime = (this.duration - this.timeLeft) * this.progressUnit;
+    console.log('brewingtime' + this.brewingTime);
+    this.coffeProgress = Observable.interval(1000).takeWhile(() => this.brewingTime <= 100);
+
+   
+
+
+
+
     this.startBrewing();
+
+   
   }
 
   startBrewing() {
+   
+
+
     
-    //this.creationDate = new Date();
-  //  var startDate = this.creationDate;
-   // this.finishedDate = moment(startDate).add(2, 'm');
-    var timeLeft = moment(moment(this.newCup.endDate)).diff(Date.now()) / 1000;
-    this.progressUnit = 100 / timeLeft;
-    console.log(this.coffeProgress.subscribe(
-      (number: number) => {
-        this.timeLeft = moment(moment(this.newCup.endDate)).diff(Date.now()) / 1000;
-        this.brewingTime += this.progressUnit / 10;
-       // console.log(this.timeLeft);
-        //console.log(this.brewingTime);
-        return 1;
-      }
-    ));
+
+  
+    
+    console.log('progressUnit' + this.progressUnit);
+    console.log(this.duration);
+    console.log(this.progressUnit);
+      this.coffeProgress.subscribe(
+        () => {
+       // this.timeLeft = moment(this.newCup.endDate).diff(Date.now()) / 1000;
+          this.timeLeft -= 1;
+        this.brewingTime += this.progressUnit;
+        console.log(this.timeLeft);
+        console.log('first' + this.brewingTime);
+        },
+        () => {
+          console.log("Error");
+
+        },
+        () => {
+          console.log("Completed");
+          console.log(new Date());
+          console.log(this.newCup.endDate);
+        },
+    );
   }
+
 }
