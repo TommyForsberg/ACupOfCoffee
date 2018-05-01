@@ -5,7 +5,7 @@
     <!-- <button (click)="startBrewing();" class="btn btn-warning" *ngIf="!brewing; else progressBar">Start Brewing</button>-->
     <!--  <ng-template #progressBar>-->
     <button (click)="addCupToQue();" class="btn btn-warning">Start Brewing</button>
-    <app-coffee-cup *ngFor="let cup of coffeCups; let i = index" [newCup]="cup"></app-coffee-cup>
+    <app-coffee-cup *ngFor="let cup of coffeCups  | async; let i = index" [newCup]="cup"></app-coffee-cup>
 
    
 

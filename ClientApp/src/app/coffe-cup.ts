@@ -1,4 +1,5 @@
-export class CoffeCup {
-  creationDate: Date;
-  endDate: Date;
+export class CoffeeCup {
+  creationTime: Date;
+  endTime: Date;
+  duration: number;
 }

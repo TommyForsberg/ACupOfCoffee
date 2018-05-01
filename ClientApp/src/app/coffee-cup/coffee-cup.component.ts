@@ -1,11 +1,12 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { Observable } from 'rxjs/Observable';
-import { TimeSpan } from 'timespan';
+//import { TimeSpan } from 'timespan';
 import * as moment from 'moment';
 import 'rxjs/Rx';
-import { CoffeCup } from '../coffe-cup';
+import { CoffeeCup } from '../coffe-cup';
 import { IScheduler } from 'rxjs/Scheduler';
 import { Subscription } from 'rxjs/Subscription';
+
 
 @Component({
   selector: 'app-coffee-cup',
@@ -13,43 +14,50 @@ import { Subscription } from 'rxjs/Subscription';
   styleUrls: ['./coffee-cup.component.css']
 })
 export class CoffeeCupComponent implements OnInit {
-  @Input() newCup: CoffeCup;
+  @Input() newCup: CoffeeCup;
 
   coffeProgress: Observable<number>;
   progressUnit: number;
   duration: number;
-  coffeProgress2: Observable<number>;
   updateInterval: number = 100;
   brewing: boolean = false;
- timeLeft;
+  timeLeft: number;
 
- brewingTime = 0;
+  brewingTime = 0;
 
-  //bgWarning = 75;
-
-  //finishedDate;
-  //creationDate;
   constructor() { }
 
+
   ngOnInit() {
-    this.duration = moment(this.newCup.endDate).diff(this.newCup.creationDate) / this.updateInterval;
-    //duration 30 sec
+    console.log(this.newCup);
+    this.duration = moment(this.newCup.endTime).diff(this.newCup.creationTime) / this.updateInterval;
     console.log("duration"+this.duration);
-    
-    console.log('timeleft' + this.timeLeft);
+    console.log("enddate" + this.newCup.endTime);
+   
     this.progressUnit = 100 / this.duration;
-    this.timeLeft = moment(this.newCup.endDate).diff(Date.now()) / this.updateInterval;
-    this.brewingTime = (this.duration - this.timeLeft) * this.progressUnit;
+
+    if (moment(this.newCup.endTime).isBefore(Date.now())) {
+      console.log("före");
+      this.timeLeft = 0;
+      this.brewingTime = 100;
+    }
+    else {
+      this.timeLeft = moment(this.newCup.endTime).diff(Date.now()) / this.updateInterval;
+      this.brewingTime = (this.duration - this.timeLeft) * this.progressUnit;
+      this.coffeProgress = Observable.interval(this.updateInterval).takeWhile(() => this.brewingTime <= 100 && this.brewingTime > 0);
+      this.startBrewing();
+
+    }
+   
     console.log('brewingtime' + this.brewingTime);
-    this.coffeProgress = Observable.interval(this.updateInterval).takeWhile(() => this.brewingTime <= 100);
+    
 
    
+  
+ 
 
 
-
-
-    this.startBrewing();
-
+    
    
   }
 
@@ -62,15 +70,14 @@ export class CoffeeCupComponent implements OnInit {
   
     
     console.log('progressUnit' + this.progressUnit);
-    console.log(this.duration);
-    console.log(this.progressUnit);
+    console.log('duration ' + this.duration);
+    console.log('progressUnit '+this.progressUnit);
       this.coffeProgress.subscribe(
         () => {
        // this.timeLeft = moment(this.newCup.endDate).diff(Date.now()) / 1000;
-          this.timeLeft -= 1;
+        this.timeLeft -= 1;
         this.brewingTime += this.progressUnit;
         console.log(this.timeLeft);
-        console.log('first' + this.brewingTime);
         },
         () => {
           console.log("Error");
@@ -78,8 +85,6 @@ export class CoffeeCupComponent implements OnInit {
         },
         () => {
           console.log("Completed");
-          console.log(new Date());
-          console.log(this.newCup.endDate);
         },
     );
   }
